@@ -206,7 +206,10 @@ pytest -v tests/test_api.py::test_health_status_ok
 
 ## Deploying Local with uvicorn
 
+```bash
 uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2
+uvicorn main:app --host 127.0.0.1 --port 8080 --workers 2
+```
 
 ## Deploying with Docker
 
@@ -248,7 +251,7 @@ gcloud run deploy tai-yi-api `
 Deployment:Deployment failed
 ERROR: (gcloud.run.services.update) The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.
 
-https://tai-yi-api-676122701159.europe-west1.run.app
+https://tai-yi-api-676122701159.us-south1.run.app/docs
 
 ### What happens behind the scenes
 
