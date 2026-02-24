@@ -28,8 +28,8 @@ app.include_router(aphorism.router)
 # ── Root redirect ─────────────────────────────────────────────────────────────
 @app.get("/", include_in_schema=False)
 async def root():
-    """Redirect root to the interactive API docs."""
-    return RedirectResponse(url="/docs")
+    """Redirect root to the aphorism endpoint."""
+    return RedirectResponse(url="/aphorism")
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
