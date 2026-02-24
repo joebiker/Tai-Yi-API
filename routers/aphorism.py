@@ -14,17 +14,15 @@ def _load_aphorisms() -> list[dict]:
     with _CSV_PATH.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
-
+"""random.choice(_load_aphorisms()) if you want to check it every time, but it is faster to load it once and reuse it."""
 APHORISMS: list[dict] = _load_aphorisms()
 
 
 @router.get("", summary="Get a random aphorism")
 async def get_random_aphorism():
     """Returns a single random aphorism."""
-    """will load from the file on disk every time, which is inefficient. Instead, we load once at startup and keep in memory."""
-    return random.choice(_load_aphorisms())
-    """Will load from the memory list of aphorisms, which is more efficient than reading from disk on every request."""
-    """return random.choice(APHORISMS)"""
+    ap = random.choice(APHORISMS)
+    return {k: v for k, v in ap.items() if v not in (None, "")}
 
 
 @router.get("/text", summary="Get a random aphorism as plain text")

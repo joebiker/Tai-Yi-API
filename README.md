@@ -206,7 +206,10 @@ pytest -v tests/test_api.py::test_health_status_ok
 
 ## Deploying Local with uvicorn
 
+```bash
 uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2
+uvicorn main:app --host 127.0.0.1 --port 8080 --workers 2
+```
 
 ## Deploying with Docker
 
