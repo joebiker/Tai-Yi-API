@@ -1,12 +1,13 @@
 import csv
 import random
-from pathlib import Path
 
 from fastapi import APIRouter, Query
 
+from config import APHORISMS_CSV
+
 router = APIRouter(prefix="/aphorism", tags=["Aphorism"])
 
-_CSV_PATH = Path(__file__).parent.parent / "aphorisms.csv"
+_CSV_PATH = APHORISMS_CSV
 
 
 def _load_aphorisms() -> list[dict]:
