@@ -1,4 +1,5 @@
 import csv
+import logging
 import random
 
 from fastapi import APIRouter, Query
@@ -6,6 +7,7 @@ from fastapi import APIRouter, Query
 from config import APHORISMS_CSV
 
 router = APIRouter(prefix="/aphorism", tags=["Aphorism"])
+logger = logging.getLogger(__name__)
 
 _CSV_PATH = APHORISMS_CSV
 
@@ -22,7 +24,18 @@ APHORISMS: list[dict] = _load_aphorisms()
 async def get_random_aphorism():
     """Returns a single random aphorism."""
     ap = random.choice(APHORISMS)
-    return {k: v for k, v in ap.items() if v not in (None, "")}
+    result = {k: v for k, v in ap.items() if v not in (None, "")}
+    logger.info(
+        "Served aphorism (JSON): '%s' — %s",
+        ap.get("text", "")[:60],
+        ap.get("author", "unknown"),
+        extra={
+            "endpoint": "get_random_aphorism",
+            "author": ap.get("author"),
+            "aphorism_preview": ap.get("text", "")[:80],
+        },
+    )
+    return result
 
 
 @router.get("/text", summary="Get a random aphorism as plain text")
@@ -31,5 +44,17 @@ async def get_random_aphorism_text():
     ap = random.choice(APHORISMS)
     note = (ap.get("note") or "").strip()
     suffix = f" ({note})" if note else ""
-    return f"'{ap['text']}' - {ap['author']}{suffix}"
+    text = f"'{ap['text']}' - {ap['author']}{suffix}"
+    logger.info(
+        "Served aphorism (text): '%s' — %s",
+        ap.get("text", "")[:60],
+        ap.get("author", "unknown"),
+        extra={
+            "endpoint": "get_random_aphorism_text",
+            "author": ap.get("author"),
+            "aphorism_preview": ap.get("text", "")[:80],
+            "has_note": bool(note),
+        },
+    )
+    return text
 

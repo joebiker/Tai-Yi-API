@@ -1,8 +1,10 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from enum import Enum
 
 router = APIRouter(prefix="/calculator", tags=["Calculator"])
+logger = logging.getLogger(__name__)
 
 
 class Operation(str, Enum):
@@ -53,6 +55,20 @@ async def calculate(payload: CalculatorRequest):
     - **divide** – a ÷ b  *(b must not be zero)*
     """
     result = _compute(payload.a, payload.b, payload.operation)
+    logger.info(
+        "Calculator (POST): %s %s %s = %s",
+        payload.a,
+        payload.operation.value,
+        payload.b,
+        result,
+        extra={
+            "endpoint": "calculate",
+            "operation": payload.operation.value,
+            "a": payload.a,
+            "b": payload.b,
+            "result": result,
+        },
+    )
     return CalculatorResponse(a=payload.a, b=payload.b, operation=payload.operation, result=result)
 
 
@@ -68,4 +84,18 @@ async def calculate_via_query(operation: Operation, a: float, b: float):
     Example: `/calculator/add?a=5&b=3`
     """
     result = _compute(a, b, operation)
+    logger.info(
+        "Calculator (GET): %s %s %s = %s",
+        a,
+        operation.value,
+        b,
+        result,
+        extra={
+            "endpoint": "calculate_via_query",
+            "operation": operation.value,
+            "a": a,
+            "b": b,
+            "result": result,
+        },
+    )
     return CalculatorResponse(a=a, b=b, operation=operation, result=result)
