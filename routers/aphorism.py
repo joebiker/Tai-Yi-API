@@ -2,9 +2,10 @@ import csv
 import logging
 import random
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, BackgroundTasks
 
 from config import APHORISMS_CSV
+from services.slack import queue_slack_message
 
 router = APIRouter(prefix="/aphorism", tags=["Aphorism"])
 logger = logging.getLogger(__name__)
@@ -21,40 +22,21 @@ APHORISMS: list[dict] = _load_aphorisms()
 
 
 @router.get("", summary="Get a random aphorism")
-async def get_random_aphorism():
+async def get_random_aphorism(background_tasks: BackgroundTasks):
     """Returns a single random aphorism."""
     ap = random.choice(APHORISMS)
-    result = {k: v for k, v in ap.items() if v not in (None, "")}
-    logger.info(
-        "Served aphorism (JSON): '%s' — %s",
-        ap.get("text", "")[:60],
-        ap.get("author", "unknown"),
-        extra={
-            "endpoint": "get_random_aphorism",
-            "author": ap.get("author"),
-            "aphorism_preview": ap.get("text", "")[:80],
-        },
-    )
-    return result
+    payload = {k: v for k, v in ap.items() if v not in (None, "")}
+    queue_slack_message(background_tasks, payload)
+    return payload
 
 
 @router.get("/text", summary="Get a random aphorism as plain text")
-async def get_random_aphorism_text():
+async def get_random_aphorism_text(background_tasks: BackgroundTasks):
     """Returns a single random aphorism formatted as plain text: 'quote' - Author"""
     ap = random.choice(APHORISMS)
     note = (ap.get("note") or "").strip()
     suffix = f" ({note})" if note else ""
-    text = f"'{ap['text']}' - {ap['author']}{suffix}"
-    logger.info(
-        "Served aphorism (text): '%s' — %s",
-        ap.get("text", "")[:60],
-        ap.get("author", "unknown"),
-        extra={
-            "endpoint": "get_random_aphorism_text",
-            "author": ap.get("author"),
-            "aphorism_preview": ap.get("text", "")[:80],
-            "has_note": bool(note),
-        },
-    )
-    return text
+    payload = f"'{ap['text']}' - {ap['author']}{suffix}"
+    queue_slack_message(background_tasks, payload)
+    return payload
 

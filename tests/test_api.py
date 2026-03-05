@@ -125,3 +125,33 @@ def test_aphorism_text_note_omitted_when_empty():
     for _ in range(20):
         response = client.get("/aphorism/text")
         assert "()" not in response.json(), "Empty parentheses found in text response"
+
+
+# ── Aphorism endpoints - With Slack ────────────────────────────────────────────────────────
+
+"""
+def test_aphorism_random_queues_same_payload_for_slack(monkeypatch):
+    captured = {}
+
+    def fake_queue(_background_tasks, payload):
+        captured["payload"] = payload
+
+    monkeypatch.setattr("routers.aphorism.queue_slack_message", fake_queue)
+
+    response = client.get("/aphorism")
+    assert response.status_code == 200
+    assert captured["payload"] == response.json()
+
+
+def test_aphorism_text_queues_same_payload_for_slack(monkeypatch):
+    captured = {}
+
+    def fake_queue(_background_tasks, payload):
+        captured["payload"] = payload
+
+    monkeypatch.setattr("routers.aphorism.queue_slack_message", fake_queue)
+
+    response = client.get("/aphorism/text")
+    assert response.status_code == 200
+    assert captured["payload"] == response.json()
+"""
