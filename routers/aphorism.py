@@ -1,4 +1,5 @@
 import csv
+import logging
 import random
 
 from fastapi import APIRouter, BackgroundTasks
@@ -7,6 +8,7 @@ from config import APHORISMS_CSV
 from services.slack import queue_slack_message
 
 router = APIRouter(prefix="/aphorism", tags=["Aphorism"])
+logger = logging.getLogger(__name__)
 
 _CSV_PATH = APHORISMS_CSV
 
