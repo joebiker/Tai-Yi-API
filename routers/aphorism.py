@@ -1,9 +1,10 @@
 import csv
 import random
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, BackgroundTasks
 
 from config import APHORISMS_CSV
+from services.slack import queue_slack_message
 
 router = APIRouter(prefix="/aphorism", tags=["Aphorism"])
 
@@ -19,17 +20,21 @@ APHORISMS: list[dict] = _load_aphorisms()
 
 
 @router.get("", summary="Get a random aphorism")
-async def get_random_aphorism():
+async def get_random_aphorism(background_tasks: BackgroundTasks):
     """Returns a single random aphorism."""
     ap = random.choice(APHORISMS)
-    return {k: v for k, v in ap.items() if v not in (None, "")}
+    payload = {k: v for k, v in ap.items() if v not in (None, "")}
+    queue_slack_message(background_tasks, payload)
+    return payload
 
 
 @router.get("/text", summary="Get a random aphorism as plain text")
-async def get_random_aphorism_text():
+async def get_random_aphorism_text(background_tasks: BackgroundTasks):
     """Returns a single random aphorism formatted as plain text: 'quote' - Author"""
     ap = random.choice(APHORISMS)
     note = (ap.get("note") or "").strip()
     suffix = f" ({note})" if note else ""
-    return f"'{ap['text']}' - {ap['author']}{suffix}"
+    payload = f"'{ap['text']}' - {ap['author']}{suffix}"
+    queue_slack_message(background_tasks, payload)
+    return payload
 

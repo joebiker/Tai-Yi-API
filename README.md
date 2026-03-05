@@ -2,6 +2,8 @@
 
 A FastAPI service running on Uvicorn, providing health checks, calculator operations, and aphorisms.
 
+This branch is dedicated to logging into [Slack](https://slack.com)
+
 ## Requirements
 
 - Python 3.11+
@@ -31,7 +33,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**4. Start the server:**
+**4. (Optional) Enable Slack logging for aphorism endpoints:**
+
+Set an incoming webhook URL before starting the server.
+
+PowerShell:
+
+```powershell
+$env:SLACK_WEBHOOK_URL="https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+**5. Start the server:**
 
 ```bash
 python main.py
