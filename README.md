@@ -274,14 +274,14 @@ gcloud run services update tai-yi-api `
 
 ```powershell
 # Create the secret once
-gcloud secrets create slack-webhook-url --replication-policy=automatic
+gcloud secrets create slack-bugreports-url --replication-policy=automatic
 
 # Add/update the secret value
-echo "https://hooks.slack.com/services/XXX/YYY/ZZZ" | gcloud secrets versions add slack-webhook-url --data-file=-
+echo "https://hooks.slack.com/services/XXX/YYY/ZZZ" | gcloud secrets versions add slack-bugreports-url --data-file=-
 
 # Grant Cloud Run service account access (replace PROJECT_NUMBER)
 gcloud secrets add-iam-policy-binding slack-webhook-url `
-  --member="serviceAccount:PROJECT_NUMBER-compute@developer.gserviceaccount.com" `
+  --member="serviceAccount:southern-matter-117620-compute@developer.gserviceaccount.com" `
   --role="roles/secretmanager.secretAccessor"
 
 # Map secret to env var name used by the app
