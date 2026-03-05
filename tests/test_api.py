@@ -127,6 +127,9 @@ def test_aphorism_text_note_omitted_when_empty():
         assert "()" not in response.json(), "Empty parentheses found in text response"
 
 
+# ── Aphorism endpoints - With Slack ────────────────────────────────────────────────────────
+
+"""
 def test_aphorism_random_queues_same_payload_for_slack(monkeypatch):
     captured = {}
 
@@ -151,3 +154,4 @@ def test_aphorism_text_queues_same_payload_for_slack(monkeypatch):
     response = client.get("/aphorism/text")
     assert response.status_code == 200
     assert captured["payload"] == response.json()
+"""

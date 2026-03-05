@@ -40,7 +40,7 @@ Set an incoming webhook URL before starting the server.
 PowerShell:
 
 ```powershell
-$env:SLACK_WEBHOOK_URL="https://hooks.slack.com/services/XXX/YYY/ZZZ"
+$env:SLACK_BUGREPORTS_URL="https://hooks.slack.com/services/XXX/YYY/ZZZ"
 ```
 
 **5. Start the server:**
@@ -257,6 +257,40 @@ gcloud run deploy tai-yi-api `
   --allow-unauthenticated `
   --platform managed
 ```
+
+### Configure environment variables (Cloud Run)
+
+Your app reads the webhook with `os.getenv("SLACK_BUGREPORTS_URL")`, so set that variable on the Cloud Run service.
+
+**Option A: Plain environment variable**
+
+```powershell
+gcloud run services update tai-yi-api `
+  --region us-south1 `
+  --set-env-vars SLACK_BUGREPORTS_URL=https://hooks.slack.com/services/XXX/YYY/ZZZ
+```
+
+**Option B (recommended): Google Secret Manager**
+
+```powershell
+# Create the secret once
+gcloud secrets create slack-webhook-url --replication-policy=automatic
+
+# Add/update the secret value
+echo "https://hooks.slack.com/services/XXX/YYY/ZZZ" | gcloud secrets versions add slack-webhook-url --data-file=-
+
+# Grant Cloud Run service account access (replace PROJECT_NUMBER)
+gcloud secrets add-iam-policy-binding slack-webhook-url `
+  --member="serviceAccount:PROJECT_NUMBER-compute@developer.gserviceaccount.com" `
+  --role="roles/secretmanager.secretAccessor"
+
+# Map secret to env var name used by the app
+gcloud run services update tai-yi-api `
+  --region us-south1 `
+  --set-secrets SLACK_WEBHOOK_URL=slack-webhook-url:latest
+```
+
+After updating env vars or secrets, Cloud Run creates a new revision automatically.
 
 `--source .` uploads your code and triggers a **Cloud Build** automatically — no manual `docker build` or `docker push` required.
 
