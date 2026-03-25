@@ -221,6 +221,13 @@ docker run -p 8080:8080 tai-yi-api
 docker run -p 3000:3000 -e PORT=3000 tai-yi-api
 ```
 
+## Deploying GitHub Action to Cloud Run
+
+Project: `My Project`
+Created Action 3/25/2026
+Auth to Google key used: addfee8a73a1006bedd0b0c17a4c9b01306d4f21
+Access auths: https://console.cloud.google.com/iam-admin/serviceaccounts?project=southern-matter-117620&supportedpurview=project
+
 ## Deploying to Google Cloud (Cloud Run)
 
 The recommended hosting target is **Cloud Run** — fully managed, scales to zero, and supports the FastAPI/uvicorn stack via Docker.
