@@ -6,6 +6,10 @@ on:
       - staging
   workflow_dispatch: {}
 
+env:
+  GCP_PROJECT: southern-matter-117620
+  GCP_REGION: us-south1
+
 jobs:
   test:
     name: Run tests
@@ -38,21 +42,21 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: southern-matter-117620
+          project_id: ${{ env.GCP_PROJECT }}
 
       - name: Configure default region and platform
         run: |
-          gcloud config set run/region us-south1
+          gcloud config set run/region $GCP_REGION
           gcloud config set run/platform managed
 
       - name: Build Docker image with Cloud Build
         run: |
           gcloud builds submit --tag gcr.io/southern-matter-117620/tai-yi-api:${{ github.sha }} .
 
-      - name: Deploy Cloud Run service
+      - name: Deploy to Cloud Run service
         run: |
           gcloud run deploy tai-yi-api \
             --image gcr.io/southern-matter-117620/tai-yi-api:${{ github.sha }} \
-            --region us-south1 \
+            --region $GCP_REGION \
             --platform managed \
             --allow-unauthenticated
